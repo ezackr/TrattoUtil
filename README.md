@@ -4,7 +4,9 @@ This repository acts as a separate utilities package for the Tratto project.
 
 # Data
 
-The `oracles-dataset` from the Tratto project is pre-processed to have the form:
+This repository contains scripts in `preprocess.py` to re-format the original Oracles Dataset from the Tratto project to use a format that is more conducive to the CodeLLaMa model.
+
+The original `oracles-dataset` from the Tratto project processed to have the new format:
 
 ```
 /**
