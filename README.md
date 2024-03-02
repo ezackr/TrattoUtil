@@ -69,7 +69,7 @@ At training time, the model decodes the next token, without any hard-coded restr
 
 ### Retrieval
 
-If the current `[oracleSoFar]` is `this.`, then there may be several possible methods that may be the next token (e.g. `this.getModifiers()`). However, the current prompt does not include any information about these methods. To compensate, we prepend the possible methods and their Javadoc to the prompt,
+If the current `[oracleSoFar]` is `this.`, then there may be several possible methods in the list `[nextPossibleTokens]`. However, the prompt does not include any information about these methods, which makes it difficult for the model to determine their utility. To compensate, we prepend these methods and their Javadoc to the prompt, in the format,
 
 ```
 /**
