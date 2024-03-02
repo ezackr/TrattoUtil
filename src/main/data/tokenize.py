@@ -13,6 +13,6 @@ def tokenize(dataset: List[str]) -> List[torch.Tensor]:
     :return:
     """
     dataset_toks = []
-    for query in dataset_toks:
+    for query in dataset:
         dataset_toks.append(tokenizer.tokenize(query))
     return dataset_toks
