@@ -12,6 +12,14 @@ def _reformat_token_dp(raw_token_dp: pd.DataFrame) -> pd.DataFrame:
 
 
 def _aggregate_grouped_token_dps(grouped_token_dps: pd.DataFrame, oracle_so_far: str) -> pd.DataFrame:
+    """
+    Aggregates a group of original token datapoints into a single token
+    datapoint.
+    :param grouped_token_dps: the original token datapoints, each sharing the
+    same oracleId and oracleSoFar
+    :param oracle_so_far: the shared oracleSoFar feature
+    :return: an aggregated token datapoint
+    """
     grouped_token_dps = grouped_token_dps.reset_index()
     # collect all token information
     token_tuples = []
@@ -33,6 +41,12 @@ def _aggregate_grouped_token_dps(grouped_token_dps: pd.DataFrame, oracle_so_far:
 
 
 def _group_token_dps(raw_token_dps: pd.DataFrame) -> pd.DataFrame:
+    """
+    Aggregates the original token datapoints into groups based on their
+    corresponding oracleId and oracleSoFar features.
+    :param raw_token_dps: the original token datapoints
+    :return: the aggregated token datapoints
+    """
     grouped_token_dps = []
     for _, oracle_id_grouped_token_dps in raw_token_dps.groupby("oracleId"):
         for oracle_so_far,  oracle_so_far_grouped_token_dps in oracle_id_grouped_token_dps.groupby("oracleSoFar"):
