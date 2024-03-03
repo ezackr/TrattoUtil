@@ -22,13 +22,14 @@ def get_parent_dir(path: str, level: int = 1) -> str:
     return path
 
 
-def save_dataframe(dataset: pd.DataFrame):
+def save_dataframe(artifact_name: str, dataset: pd.DataFrame):
     """
     Saves a pandas dataframe using a special separator to avoid accidentally
     overwriting the original data
+    :param artifact_name: the file name to save the dataframe to
     :param dataset: a pandas dataframe
     """
-    dataset.to_csv(sep=PANDAS_SEPARATOR)
+    dataset.to_csv(artifact_name, sep=PANDAS_SEPARATOR)
 
 
 def load_dataframe(artifact_name: str) -> pd.DataFrame:
