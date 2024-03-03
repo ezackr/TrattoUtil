@@ -1,9 +1,5 @@
 import os
 
-import pandas as pd
-
-PANDAS_SEPARATOR: str = "[TRATTO-SEPARATOR]"
-
 
 def get_parent_dir(path: str, level: int = 1) -> str:
     """
@@ -20,27 +16,6 @@ def get_parent_dir(path: str, level: int = 1) -> str:
     for _ in range(level):
         path = os.path.dirname(path)
     return path
-
-
-def save_dataframe(artifact_name: str, dataset: pd.DataFrame):
-    """
-    Saves a pandas dataframe using a special separator to avoid accidentally
-    overwriting the original data
-    :param artifact_name: the file name to save the dataframe to
-    :param dataset: a pandas dataframe
-    """
-    dataset.to_csv(artifact_name, sep=PANDAS_SEPARATOR)
-
-
-def load_dataframe(artifact_name: str) -> pd.DataFrame:
-    """
-    Loads a CSV file of a pandas dataframe that has been saved using
-    ``src.main.util.io.save_dataframe``. The aforementioned method uses a
-    special separator to avoid overwriting data.
-    :param artifact_name: a CSV file
-    :return: the corresponding pandas dataframe
-    """
-    return pd.read_csv(artifact_name, sep=PANDAS_SEPARATOR)
 
 
 current_path: str = os.path.abspath(__file__)
