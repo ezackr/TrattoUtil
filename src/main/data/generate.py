@@ -25,7 +25,7 @@ def generate_dataset(dataset_name: str):
 
 
 def main():
-    dataset_name = "tokens"
+    dataset_name = "oracles"
     generate_dataset(dataset_name)
 
 
