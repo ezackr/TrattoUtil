@@ -7,8 +7,25 @@ from tqdm import tqdm
 from src.main.util import root_dir
 
 
-def _reformat_token_dp(raw_token_dp: pd.DataFrame) -> pd.DataFrame:
-    pass
+def _reformat_token_dp(grouped_token_dp: pd.DataFrame) -> pd.DataFrame:
+    """
+
+    :param grouped_token_dp:
+    :return:
+    """
+    output_col_name = "reformat_col"
+    methodJavadoc = grouped_token_dp["methodJavadoc"].replace("    /**", "/**").replace("\n     *", "\n *")
+    methodSignature = grouped_token_dp["methodSourceCode"].split("{")[0]
+    assertionComment = f'// \"{grouped_token_dp["javadocTag"]}\" assertion'.replace("\n", "\\n")
+    tokenValues = [token_info[0] for token_info in grouped_token_dp["nextPossibleTokens"]]
+    nextPossibleTokensComment = f"// Next possible tokens: {tokenValues}"
+    assertion = f'assertTrue({grouped_token_dp["oracleSoFar"]}'
+    grouped_token_dp[output_col_name] = methodJavadoc + "\n" + \
+        methodSignature + "{\n}\n\n" + \
+        assertionComment + "\n" + \
+        nextPossibleTokensComment + "\n" + \
+        assertion
+    return grouped_token_dp[output_col_name]
 
 
 def _aggregate_grouped_token_dps(grouped_token_dps: pd.DataFrame, oracle_so_far: str) -> pd.DataFrame:
@@ -35,7 +52,7 @@ def _aggregate_grouped_token_dps(grouped_token_dps: pd.DataFrame, oracle_so_far:
         "methodJavadoc": grouped_token_dps["methodJavadoc"][0],
         "methodSourceCode": grouped_token_dps["methodSourceCode"][0],
         "oracleSoFar": oracle_so_far,
-        "nextPossibleTokens": token_tuples
+        "nextPossibleTokens": [token_tuples]
     }
     return pd.DataFrame(agg_data)
 
@@ -68,15 +85,7 @@ def get_tokens_dataset() -> pd.DataFrame:
             abs_path = join(root, file)
             raw_token_dps = pd.read_json(abs_path)
             if len(raw_token_dps) > 0:
-                raw_token_dps = _group_token_dps(raw_token_dps)
-                token_dps = raw_token_dps.apply(_reformat_token_dp, axis=1)
+                grouped_token_dps = _group_token_dps(raw_token_dps)
+                token_dps = grouped_token_dps.apply(_reformat_token_dp, axis=1)
                 token_dps_list.append(token_dps)
-    return pd.concat(token_dps_list)
-
-
-def main():
-    get_tokens_dataset()
-
-
-if __name__ == "__main__":
-    main()
+    return pd.concat(token_dps_list).reset_index()
