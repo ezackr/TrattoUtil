@@ -9,7 +9,8 @@ from src.main.util import root_dir
 
 def _reformat_token_dp(grouped_token_dp: pd.DataFrame) -> pd.DataFrame:
     """
-
+    Re-formats a token datapoint into the new format, as described in the
+    top-level README.
     :param grouped_token_dp:
     :return:
     """
