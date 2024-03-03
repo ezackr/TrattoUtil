@@ -20,12 +20,12 @@ def generate_dataset(dataset_name: str):
     else:
         raise ValueError(f"Unrecognized dataset name: {dataset_name}")
     print(f"Generated {len(dataset)} datapoints from the {dataset_name} dataset.")
-    artifact_name = join(root_dir, "dataset", f"{dataset_name}_dataset.csv")
-    dataset.to_json(artifact_name)
+    artifact_name = join(root_dir, "dataset", f"{dataset_name}_dataset.json")
+    dataset.to_json(artifact_name, orient='records')
 
 
 def main():
-    dataset_name = "oracles"
+    dataset_name = "tokens"
     generate_dataset(dataset_name)
 
 

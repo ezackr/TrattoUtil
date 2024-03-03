@@ -89,4 +89,7 @@ def get_tokens_dataset() -> pd.DataFrame:
                 grouped_token_dps = _group_token_dps(raw_token_dps)
                 token_dps = grouped_token_dps.apply(_reformat_token_dp, axis=1)
                 token_dps_list.append(token_dps)
-    return pd.concat(token_dps_list).reset_index()
+    all_token_dps = pd.concat(token_dps_list).reset_index()
+    all_token_dps.rename(columns={0: "text"}, inplace=True)
+    all_token_dps.drop(columns=["index"], inplace=True)
+    return all_token_dps
