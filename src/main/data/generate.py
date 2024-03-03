@@ -22,12 +22,3 @@ def generate_dataset(dataset_name: str):
     print(f"Generated {len(dataset)} datapoints from the {dataset_name} dataset.")
     artifact_name = join(root_dir, "dataset", f"{dataset_name}_dataset.json")
     dataset.to_json(artifact_name, orient='records')
-
-
-def main():
-    dataset_name = "oracles"
-    generate_dataset(dataset_name)
-
-
-if __name__ == "__main__":
-    main()
