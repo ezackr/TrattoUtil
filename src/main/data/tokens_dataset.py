@@ -56,10 +56,10 @@ def _reformat_token_dp(grouped_token_dp: pd.DataFrame, use_retrieval: bool) -> p
         retrieval_info = _get_retrieval_information(grouped_token_dp["nextPossibleTokens"])
     else:
         retrieval_info = ""
-    method_javadoc = grouped_token_dp["methodJavadoc"]\
-        .replace("    /**", "/**")\
-        .replace("\n     *", "\n *")\
-        .replace("\n   *", "\n *")\
+    method_javadoc = grouped_token_dp["methodJavadoc"] \
+        .replace("    /**", "/**") \
+        .replace("\n     *", "\n *") \
+        .replace("\n   *", "\n *") \
         .replace("\n\t *", "\n *")
     method_signature = grouped_token_dp["methodSourceCode"].split("{")[0]
     assertion_comment = f'// \"{grouped_token_dp["javadocTag"]}\" assertion'.replace("\n", "\\n")
