@@ -8,15 +8,16 @@ from src.main.util import root_dir
 dataset_names = ["oracles", "tokens"]
 
 
-def generate_dataset(dataset_name: str):
+def generate_dataset(dataset_name: str, use_retrieval: bool = False):
     """
     Generates the given dataset and saves the output as a ".pt" file.
+    :param use_retrieval: whether to enable method retrieval
     :param dataset_name: the dataset type
     """
     if dataset_name == "oracles":
         dataset = get_oracles_dataset()
     elif dataset_name == "tokens":
-        dataset = get_tokens_dataset()
+        dataset = get_tokens_dataset(use_retrieval)
     else:
         raise ValueError(f"Unrecognized dataset name: {dataset_name}")
     print(f"Generated {len(dataset)} datapoints from the {dataset_name} dataset.")
