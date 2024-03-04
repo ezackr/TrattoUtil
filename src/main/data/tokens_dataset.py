@@ -7,7 +7,7 @@ from tqdm import tqdm
 from src.main.util import root_dir
 
 
-def _get_retrieval_information(next_possible_tokens: pd.DataFrame):
+def _get_retrieval_information(next_possible_tokens: pd.DataFrame) -> str:
     pass
 
 
@@ -19,13 +19,18 @@ def _reformat_token_dp(grouped_token_dp: pd.DataFrame, use_retrieval: bool) -> p
     :return:
     """
     output_col_name = "reformat_col"
+    if use_retrieval:
+        retrieval_info = _get_retrieval_information(grouped_token_dp["nextPossibleTokens"]) + "\n\n"
+    else:
+        retrieval_info = ""
     method_javadoc = grouped_token_dp["methodJavadoc"].replace("    /**", "/**").replace("\n     *", "\n *")
     method_signature = grouped_token_dp["methodSourceCode"].split("{")[0]
     assertion_comment = f'// \"{grouped_token_dp["javadocTag"]}\" assertion'.replace("\n", "\\n")
     token_values = [token_info[0] for token_info in grouped_token_dp["nextPossibleTokens"]]
     next_possible_tokens_comment = f"// Next possible tokens: {token_values}"
     assertion = f'assertTrue({grouped_token_dp["oracleSoFar"]}'
-    grouped_token_dp[output_col_name] = method_javadoc + "\n" + \
+    grouped_token_dp[output_col_name] = retrieval_info + \
+        method_javadoc + "\n" + \
         method_signature + "{\n}\n\n" + \
         assertion_comment + "\n" + \
         next_possible_tokens_comment + "\n" + \
