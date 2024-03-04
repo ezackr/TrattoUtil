@@ -7,7 +7,11 @@ from tqdm import tqdm
 from src.main.util import root_dir
 
 
-def _reformat_token_dp(grouped_token_dp: pd.DataFrame) -> pd.DataFrame:
+def _get_retrieval_information(next_possible_tokens: pd.DataFrame):
+    pass
+
+
+def _reformat_token_dp(grouped_token_dp: pd.DataFrame, use_retrieval: bool) -> pd.DataFrame:
     """
     Re-formats a token datapoint into the new format, as described in the
     top-level README.
@@ -15,16 +19,16 @@ def _reformat_token_dp(grouped_token_dp: pd.DataFrame) -> pd.DataFrame:
     :return:
     """
     output_col_name = "reformat_col"
-    methodJavadoc = grouped_token_dp["methodJavadoc"].replace("    /**", "/**").replace("\n     *", "\n *")
-    methodSignature = grouped_token_dp["methodSourceCode"].split("{")[0]
-    assertionComment = f'// \"{grouped_token_dp["javadocTag"]}\" assertion'.replace("\n", "\\n")
-    tokenValues = [token_info[0] for token_info in grouped_token_dp["nextPossibleTokens"]]
-    nextPossibleTokensComment = f"// Next possible tokens: {tokenValues}"
+    method_javadoc = grouped_token_dp["methodJavadoc"].replace("    /**", "/**").replace("\n     *", "\n *")
+    method_signature = grouped_token_dp["methodSourceCode"].split("{")[0]
+    assertion_comment = f'// \"{grouped_token_dp["javadocTag"]}\" assertion'.replace("\n", "\\n")
+    token_values = [token_info[0] for token_info in grouped_token_dp["nextPossibleTokens"]]
+    next_possible_tokens_comment = f"// Next possible tokens: {token_values}"
     assertion = f'assertTrue({grouped_token_dp["oracleSoFar"]}'
-    grouped_token_dp[output_col_name] = methodJavadoc + "\n" + \
-        methodSignature + "{\n}\n\n" + \
-        assertionComment + "\n" + \
-        nextPossibleTokensComment + "\n" + \
+    grouped_token_dp[output_col_name] = method_javadoc + "\n" + \
+        method_signature + "{\n}\n\n" + \
+        assertion_comment + "\n" + \
+        next_possible_tokens_comment + "\n" + \
         assertion
     return grouped_token_dp[output_col_name]
 
@@ -72,7 +76,7 @@ def _group_token_dps(raw_token_dps: pd.DataFrame) -> pd.DataFrame:
     return pd.concat(grouped_token_dps)
 
 
-def get_tokens_dataset() -> pd.DataFrame:
+def get_tokens_dataset(use_retrieval: bool = False) -> pd.DataFrame:
     """
     Gets all non-empty token datapoints from the tokens dataset, and
     re-formats each datapoint using the format specified in the top-level
@@ -87,7 +91,7 @@ def get_tokens_dataset() -> pd.DataFrame:
             raw_token_dps = pd.read_json(abs_path)
             if len(raw_token_dps) > 0:
                 grouped_token_dps = _group_token_dps(raw_token_dps)
-                token_dps = grouped_token_dps.apply(_reformat_token_dp, axis=1)
+                token_dps = grouped_token_dps.apply(lambda x: _reformat_token_dp(x, use_retrieval), axis=1)
                 token_dps_list.append(token_dps)
     all_token_dps = pd.concat(token_dps_list).reset_index()
     all_token_dps.rename(columns={0: "text"}, inplace=True)
