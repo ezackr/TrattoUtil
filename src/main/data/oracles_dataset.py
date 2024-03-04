@@ -15,13 +15,17 @@ def _reformat_oracle_dp(raw_oracle_dp: pd.DataFrame) -> pd.DataFrame:
     :return: the re-formatted oracle datapoint
     """
     output_col_name = "reformat_col"
-    methodJavadoc = raw_oracle_dp["methodJavadoc"].replace("    /**", "/**").replace("\n     *", "\n *")
-    methodSignature = raw_oracle_dp["methodSourceCode"].split("{")[0]
-    assertionComment = f'// \"{raw_oracle_dp["javadocTag"]}\" assertion'.replace("\n", "\\n")
+    method_javadoc = raw_oracle_dp["methodJavadoc"] \
+        .replace("    /**", "/**") \
+        .replace("\n     *", "\n *") \
+        .replace("\n   *", "\n *") \
+        .replace("\n\t *", "\n *")
+    method_signature = raw_oracle_dp["methodSourceCode"].split("{")[0]
+    assertion_comment = f'// \"{raw_oracle_dp["javadocTag"]}\" assertion'.replace("\n", "\\n")
     assertion = f'assertTrue({raw_oracle_dp["oracle"].split(";")[0]});'
-    raw_oracle_dp[output_col_name] = methodJavadoc + "\n" + \
-        methodSignature + " {\n}\n\n" + \
-        assertionComment + "\n" + \
+    raw_oracle_dp[output_col_name] = method_javadoc + "\n" + \
+        method_signature + " {\n}\n\n" + \
+        assertion_comment + "\n" + \
         assertion
     return raw_oracle_dp[output_col_name]
 
