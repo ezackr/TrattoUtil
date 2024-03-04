@@ -47,8 +47,9 @@ def _reformat_token_dp(grouped_token_dp: pd.DataFrame, use_retrieval: bool) -> p
     """
     Re-formats a token datapoint into the new format, as described in the
     top-level README.
-    :param grouped_token_dp:
-    :return:
+    :param grouped_token_dp: token datapoints, grouped by "oracleId" and
+    "oracleSoFar"
+    :return: the aggregated token datapoint
     """
     output_col_name = "reformat_col"
     if use_retrieval:
