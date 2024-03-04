@@ -7,8 +7,28 @@ from tqdm import tqdm
 from src.main.util import root_dir
 
 
+def _get_method_retrieval_information(method_source_code: str) -> str:
+    if "{" not in method_source_code:
+        # "source code" only includes method signature
+        return method_source_code + " {\n}\n\n"
+    # separate javadoc comment and source code
+    comment_indexes = [i for i in range(len(method_source_code) - 1) if method_source_code[i:i+2] == "*/"]
+    if comment_indexes:
+        method_javadoc = method_source_code[:comment_indexes[-1] + 2]
+        method_signature = method_source_code[comment_indexes[-1] + 2:].split("{")[0]
+        return method_javadoc + method_signature + " {\n}\n\n"
+    else:
+        return method_source_code.split("{")[0] + " {\n}\n\n"
+
+
 def _get_retrieval_information(next_possible_tokens: pd.DataFrame) -> str:
-    pass
+    retrieval_info = ""
+    for token_info in next_possible_tokens:
+        if token_info[1] == "MethodName":
+            method_source_code = token_info[2][2]
+            if method_source_code:
+                retrieval_info += _get_method_retrieval_information(method_source_code)
+    return retrieval_info
 
 
 def _reformat_token_dp(grouped_token_dp: pd.DataFrame, use_retrieval: bool) -> pd.DataFrame:
@@ -20,7 +40,7 @@ def _reformat_token_dp(grouped_token_dp: pd.DataFrame, use_retrieval: bool) -> p
     """
     output_col_name = "reformat_col"
     if use_retrieval:
-        retrieval_info = _get_retrieval_information(grouped_token_dp["nextPossibleTokens"]) + "\n\n"
+        retrieval_info = _get_retrieval_information(grouped_token_dp["nextPossibleTokens"])
     else:
         retrieval_info = ""
     method_javadoc = grouped_token_dp["methodJavadoc"].replace("    /**", "/**").replace("\n     *", "\n *")
@@ -88,7 +108,10 @@ def get_tokens_dataset(use_retrieval: bool = False) -> pd.DataFrame:
     README.
     :return: the re-formatted token datapoints
     """
-    dataset_dir = join(root_dir, "dataset", "tokens-dataset")
+    if use_retrieval:
+        dataset_dir = join(root_dir, "dataset", "tokens-retrieval-dataset")
+    else:
+        dataset_dir = join(root_dir, "dataset", "tokens-dataset")
     token_dps_list = []
     for root, _, files in walk(dataset_dir):
         for file in tqdm(files):
