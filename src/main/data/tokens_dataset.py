@@ -8,6 +8,13 @@ from src.main.util import root_dir
 
 
 def _get_method_retrieval_information(method_source_code: str) -> str:
+    """
+    Gets the method Javadoc and signature of a token. If the method does not
+    have a Javadoc, then only the signature is used. The returned string will
+    include annotations.
+    :param method_source_code: the source code of a method
+    :return: the method Javadoc and signature
+    """
     if "{" not in method_source_code:
         # "source code" only includes method signature
         return method_source_code + " {\n}\n\n"
@@ -22,6 +29,11 @@ def _get_method_retrieval_information(method_source_code: str) -> str:
 
 
 def _get_retrieval_information(next_possible_tokens: pd.DataFrame) -> str:
+    """
+    Gets all information for the next possible tokens
+    :param next_possible_tokens: all next possible tokens
+    :return: a string with information for each possible token
+    """
     retrieval_info = ""
     for token_info in next_possible_tokens:
         if token_info[1] == "MethodName":
