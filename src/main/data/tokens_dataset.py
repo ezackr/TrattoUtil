@@ -31,7 +31,7 @@ def _reformat_token_dp(grouped_token_dp: pd.DataFrame, use_retrieval: bool) -> p
     assertion = f'assertTrue({grouped_token_dp["oracleSoFar"]}'
     grouped_token_dp[output_col_name] = retrieval_info + \
         method_javadoc + "\n" + \
-        method_signature + "{\n}\n\n" + \
+        method_signature + " {\n}\n\n" + \
         assertion_comment + "\n" + \
         next_possible_tokens_comment + "\n" + \
         assertion

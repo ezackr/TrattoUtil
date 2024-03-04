@@ -20,7 +20,7 @@ def _reformat_oracle_dp(raw_oracle_dp: pd.DataFrame) -> pd.DataFrame:
     assertionComment = f'// \"{raw_oracle_dp["javadocTag"]}\" assertion'.replace("\n", "\\n")
     assertion = f'assertTrue({raw_oracle_dp["oracle"].split(";")[0]});'
     raw_oracle_dp[output_col_name] = methodJavadoc + "\n" + \
-        methodSignature + "{\n}\n\n" + \
+        methodSignature + " {\n}\n\n" + \
         assertionComment + "\n" + \
         assertion
     return raw_oracle_dp[output_col_name]
