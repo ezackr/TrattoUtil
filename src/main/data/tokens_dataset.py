@@ -118,6 +118,19 @@ def _group_token_dps(raw_token_dps: pd.DataFrame) -> pd.DataFrame:
     return pd.concat(grouped_token_dps)
 
 
+def _read_nonempty_token_dps(abs_path: str) -> pd.DataFrame:
+    """
+    Reads all token datapoints from a JSON file as a pandas dataframe. This
+    method filters datapoints if their "methodJavadoc" is empty.
+    :param abs_path: the path to the JSON file of token datapoints
+    :return: the corresponding pandas dataframe
+    """
+    raw_token_dps = pd.read_json(abs_path)
+    if len(raw_token_dps) == 0:
+        return raw_token_dps
+    return raw_token_dps[raw_token_dps["methodJavadoc"] != ""]
+
+
 def get_tokens_dataset(use_retrieval: bool = False) -> pd.DataFrame:
     """
     Gets all non-empty token datapoints from the tokens dataset, and
@@ -133,7 +146,7 @@ def get_tokens_dataset(use_retrieval: bool = False) -> pd.DataFrame:
     for root, _, files in walk(dataset_dir):
         for file in tqdm(files):
             abs_path = join(root, file)
-            raw_token_dps = pd.read_json(abs_path)
+            raw_token_dps = _read_nonempty_token_dps(abs_path)
             if len(raw_token_dps) > 0:
                 grouped_token_dps = _group_token_dps(raw_token_dps)
                 token_dps = grouped_token_dps.apply(lambda x: _reformat_token_dp(x, use_retrieval), axis=1)
