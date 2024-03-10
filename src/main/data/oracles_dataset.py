@@ -31,15 +31,15 @@ def _reformat_oracle_dp(raw_oracle_dp: pd.DataFrame) -> pd.DataFrame:
 
 def _read_nonempty_oracle_dps(abs_path: str) -> pd.DataFrame:
     """
-    Reads all non-empty oracle datapoints from a JSON file as a pandas
-    dataframe.
+    Reads all oracle datapoints from a JSON file as a pandas dataframe. This
+    method filters datapoints if their "methodJavadoc" is empty.
     :param abs_path: the path to the JSON file of oracle datapoints
     :return: the corresponding pandas dataframe
     """
     raw_oracle_dps = pd.read_json(abs_path)
     if len(raw_oracle_dps) == 0:
         return raw_oracle_dps
-    return raw_oracle_dps[(raw_oracle_dps["oracle"] != ";") & (raw_oracle_dps["methodJavadoc"] != "")]
+    return raw_oracle_dps[raw_oracle_dps["methodJavadoc"] != ""]
 
 
 def get_oracles_dataset() -> pd.DataFrame:
