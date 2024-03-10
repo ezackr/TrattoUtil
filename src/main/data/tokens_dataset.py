@@ -139,6 +139,5 @@ def get_tokens_dataset(use_retrieval: bool = False) -> pd.DataFrame:
                 token_dps = grouped_token_dps.apply(lambda x: _reformat_token_dp(x, use_retrieval), axis=1)
                 token_dps_list.append(token_dps)
     all_token_dps = pd.concat(token_dps_list).reset_index()
-    all_token_dps.rename(columns={0: "text"}, inplace=True)
     all_token_dps.drop(columns=["index"], inplace=True)
     return all_token_dps
