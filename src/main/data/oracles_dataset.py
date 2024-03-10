@@ -1,5 +1,6 @@
 from os import walk
 from os.path import join
+import re
 
 import pandas as pd
 from tqdm import tqdm
@@ -21,7 +22,8 @@ def _reformat_oracle_dp(raw_oracle_dp: pd.DataFrame) -> pd.DataFrame:
         .replace("\n   *", "\n *") \
         .replace("\n\t *", "\n *")
     method_signature = raw_oracle_dp["methodSourceCode"].split("{")[0]
-    assertion_comment = f'// \"{raw_oracle_dp["javadocTag"]}\" assertion'.replace("\n", "\\n")
+    assertion_comment = f'// \"{raw_oracle_dp["javadocTag"]}\" assertion'
+    assertion_comment = re.sub(r"\n\s*", " ", assertion_comment)
     assertion = f'assertTrue({raw_oracle_dp["oracle"].split(";")[0]});'
     raw_oracle_dp[output_col_name] = method_javadoc + "\n" + \
         method_signature + " {\n}\n\n" + \
