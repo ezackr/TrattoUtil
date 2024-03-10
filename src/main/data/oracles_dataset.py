@@ -16,11 +16,8 @@ def _reformat_oracle_dp(raw_oracle_dp: pd.DataFrame) -> pd.DataFrame:
     :return: the re-formatted oracle datapoint
     """
     output_col_name = "reformat_col"
-    method_javadoc = raw_oracle_dp["methodJavadoc"] \
-        .replace("    /**", "/**") \
-        .replace("\n     *", "\n *") \
-        .replace("\n   *", "\n *") \
-        .replace("\n\t *", "\n *")
+    method_javadoc = raw_oracle_dp["methodJavadoc"].replace("    /**", "/**")
+    method_javadoc = re.sub(r"\n[ \t]*\*", " *", method_javadoc, flags=re.MULTILINE)
     method_signature = raw_oracle_dp["methodSourceCode"].split("{")[0]
     assertion_comment = f'// \"{raw_oracle_dp["javadocTag"]}\" assertion'
     assertion_comment = re.sub(r"\n\s*", " ", assertion_comment)
