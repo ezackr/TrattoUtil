@@ -77,10 +77,9 @@ def _reformat_token_dp(grouped_token_dp: pd.DataFrame, use_retrieval: bool) -> p
 
 def _aggregate_grouped_token_dps(grouped_token_dps: pd.DataFrame, oracle_so_far: str) -> pd.DataFrame:
     """
-    Aggregates a group of original token datapoints into a single token
-    datapoint.
-    :param grouped_token_dps: the original token datapoints, each sharing the
-    same oracleId and oracleSoFar
+    Aggregates a group of original token datapoints into a single datapoint.
+    :param grouped_token_dps: the grouped raw token datapoints, each from the
+    same original oracleId and oracleSoFar features
     :param oracle_so_far: the shared oracleSoFar feature
     :return: an aggregated token datapoint
     """
@@ -91,9 +90,10 @@ def _aggregate_grouped_token_dps(grouped_token_dps: pd.DataFrame, oracle_so_far:
         token_tuples.append((
             grouped_token_dps["token"][idx],
             grouped_token_dps["tokenClass"][idx],
-            grouped_token_dps["tokenInfo"][idx]
+            grouped_token_dps["tokenInfo"][idx],
+            grouped_token_dps["label"][idx]
         ))
-    # aggregate remaining data
+    # aggregate datapoints
     agg_data = {
         "javadocTag": grouped_token_dps["javadocTag"][0],
         "methodJavadoc": grouped_token_dps["methodJavadoc"][0],
