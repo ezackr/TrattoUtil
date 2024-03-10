@@ -59,4 +59,5 @@ def get_oracles_dataset() -> pd.DataFrame:
                 oracle_dps = raw_oracle_dps.apply(_reformat_oracle_dp, axis=1)
                 oracle_dps_list.append(oracle_dps)
     all_oracle_dps = pd.concat(oracle_dps_list).reset_index()
+    all_oracle_dps.drop(columns=["index"], inplace=True)
     return all_oracle_dps

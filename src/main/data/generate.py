@@ -34,10 +34,15 @@ def generate_dataset(dataset_name: str, remove_empty_oracles: bool = False):
         dataset = get_tokens_dataset(use_retrieval=True)
     else:
         raise ValueError(f"Unrecognized dataset name: {dataset_name}")
-    # remove empty oracles if necessary
-    if remove_empty_oracles:
-        dataset = _filter_empty_oracles(dataset)
-    print(f"Generated {len(dataset)} datapoints from the {dataset_name} dataset.")
-    # save final dataset
-    artifact_name = join(root_dir, "dataset", f"{dataset_name}_dataset.json")
-    dataset.to_json(artifact_name, orient='records')
+    print(dataset)
+    # # remove empty oracles if necessary
+    # if remove_empty_oracles:
+    #     dataset = _filter_empty_oracles(dataset)
+    # print(f"Generated {len(dataset)} datapoints from the {dataset_name} dataset.")
+    # # save final dataset
+    # artifact_name = join(root_dir, "dataset", f"{dataset_name}_dataset.json")
+    # dataset.to_json(artifact_name, orient='records')
+
+
+if __name__ == "__main__":
+    generate_dataset("oracles")
