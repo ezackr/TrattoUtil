@@ -47,11 +47,10 @@ def _reformat_token_dp(grouped_token_dp: pd.DataFrame, use_retrieval: bool) -> p
     """
     Re-formats a token datapoint into the new format, as described in the
     top-level README.
-    :param grouped_token_dp: token datapoints, grouped by "oracleId" and
+    :param grouped_token_dp: token datapoints grouped by "oracleId" and
     "oracleSoFar"
-    :return: the aggregated token datapoint
+    :return: the re-formatted token datapoint
     """
-    output_col_name = "reformat_col"
     if use_retrieval:
         retrieval_info = _get_retrieval_information(grouped_token_dp["nextPossibleTokens"])
     else:
@@ -66,13 +65,13 @@ def _reformat_token_dp(grouped_token_dp: pd.DataFrame, use_retrieval: bool) -> p
     token_values = [token_info[0] for token_info in grouped_token_dp["nextPossibleTokens"]]
     next_possible_tokens_comment = f"// Next possible tokens: {token_values}"
     assertion = f'assertTrue({grouped_token_dp["oracleSoFar"]}'
-    grouped_token_dp[output_col_name] = retrieval_info + \
+    grouped_token_dp["prompt"] = retrieval_info + \
         method_javadoc + "\n" + \
         method_signature + " {\n}\n\n" + \
         assertion_comment + "\n" + \
         next_possible_tokens_comment + "\n" + \
         assertion
-    return grouped_token_dp[output_col_name]
+    return grouped_token_dp[["prompt", "label"]]
 
 
 def _aggregate_grouped_token_dps(grouped_token_dps: pd.DataFrame, oracle_so_far: str) -> pd.DataFrame:
