@@ -52,7 +52,7 @@ def _get_next_token(next_possible_tokens: Tuple[str, str, str, str]) -> str:
     :return: the next token in the oracleSoFar
     """
     for token_info in next_possible_tokens:
-        if token_info[-1] == "true":
+        if token_info[-1]:
             return token_info[0]
     raise ValueError("Unable to identify next possible token from list:", next_possible_tokens)
 
@@ -134,7 +134,7 @@ def _group_token_dps(raw_token_dps: pd.DataFrame) -> pd.DataFrame:
     return pd.concat(grouped_token_dps)
 
 
-def _read_nonempty_token_dps(abs_path: str) -> pd.DataFrame:
+def _read_raw_token_dps(abs_path: str) -> pd.DataFrame:
     """
     Reads all token datapoints from a JSON file as a pandas dataframe. This
     method filters datapoints if their "methodJavadoc" is empty.
@@ -145,6 +145,24 @@ def _read_nonempty_token_dps(abs_path: str) -> pd.DataFrame:
     if len(raw_token_dps) == 0:
         return raw_token_dps
     return raw_token_dps[raw_token_dps["methodJavadoc"] != ""]
+
+
+def _read_raw_token_dps_dir(dataset_dir: str) -> pd.DataFrame:
+    """
+    Reads all token datapoints from a directory of JSON files as a pandas
+    dataframe. This method filters datapoints if their "methodJavadoc" is
+    empty.
+    :param dataset_dir: a directory of JSON files of token datapoints
+    :return: the corresponding pandas dataframe
+    """
+    raw_token_dps_list = []
+    for root, _, files in walk(dataset_dir):
+        for file in tqdm(files):
+            abs_path = join(root, file)
+            raw_token_dps = _read_raw_token_dps(abs_path)
+            if len(raw_token_dps) > 0:
+                raw_token_dps_list.append(raw_token_dps)
+    return pd.concat(raw_token_dps_list).reset_index()
 
 
 def get_tokens_dataset(use_retrieval: bool = False) -> pd.DataFrame:
@@ -158,15 +176,7 @@ def get_tokens_dataset(use_retrieval: bool = False) -> pd.DataFrame:
         dataset_dir = join(root_dir, "dataset", "tokens-retrieval-dataset")
     else:
         dataset_dir = join(root_dir, "dataset", "tokens-dataset")
-    token_dps_list = []
-    for root, _, files in walk(dataset_dir):
-        for file in tqdm(files):
-            abs_path = join(root, file)
-            raw_token_dps = _read_nonempty_token_dps(abs_path)
-            if len(raw_token_dps) > 0:
-                grouped_token_dps = _group_token_dps(raw_token_dps)
-                token_dps = grouped_token_dps.apply(lambda x: _reformat_token_dp(x, use_retrieval), axis=1)
-                token_dps_list.append(token_dps)
-    all_token_dps = pd.concat(token_dps_list).reset_index()
-    all_token_dps.drop(columns=["index"], inplace=True)
-    return all_token_dps
+    all_raw_token_dps = _read_raw_token_dps_dir(dataset_dir)
+    all_grouped_token_dps = _group_token_dps(raw_token_dps=all_raw_token_dps)
+    all_token_dps = all_grouped_token_dps.apply(lambda x: _reformat_token_dp(x, use_retrieval), axis=1)
+    return all_token_dps.reset_index()
