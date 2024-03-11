@@ -1,6 +1,7 @@
 from os import walk
 from os.path import join
 import re
+from typing import Tuple
 
 import pandas as pd
 from tqdm import tqdm
@@ -44,6 +45,18 @@ def _get_retrieval_information(next_possible_tokens: pd.DataFrame) -> str:
     return retrieval_info
 
 
+def _get_next_token(next_possible_tokens: Tuple[str, str, str, str]) -> str:
+    """
+    Gets the next token in an oracle from a list of possible tokens
+    :param next_possible_tokens: all next possible tokens
+    :return: the next token in the oracleSoFar
+    """
+    for token_info in next_possible_tokens:
+        if token_info[-1] == "true":
+            return token_info[0]
+    raise ValueError("Unable to identify next possible token from list:", next_possible_tokens)
+
+
 def _reformat_token_dp(grouped_token_dp: pd.DataFrame, use_retrieval: bool) -> pd.DataFrame:
     """
     Re-formats a token datapoint into the new format, as described in the
@@ -52,23 +65,29 @@ def _reformat_token_dp(grouped_token_dp: pd.DataFrame, use_retrieval: bool) -> p
     "oracleSoFar"
     :return: the re-formatted token datapoint
     """
+    # get retrieval information
     if use_retrieval:
         retrieval_info = _get_retrieval_information(grouped_token_dp["nextPossibleTokens"])
     else:
         retrieval_info = ""
+    # get prompt and label
     method_javadoc = grouped_token_dp["methodJavadoc"].replace("    /**", "/**")
     method_javadoc = re.sub(r"\n[ \t]*\*", "\n *", method_javadoc, flags=re.MULTILINE)
     method_signature = grouped_token_dp["methodSourceCode"].split("{")[0]
-    assertion_comment = f'// \"{grouped_token_dp["javadocTag"]}\" assertion'.replace("\n", "\\n")
+    assertion_comment = f'// \"{grouped_token_dp["javadocTag"]}\" assertion'
+    assertion_comment = re.sub(r"\n\s*", " ", assertion_comment)
     token_values = [token_info[0] for token_info in grouped_token_dp["nextPossibleTokens"]]
     next_possible_tokens_comment = f"// Next possible tokens: {token_values}"
-    assertion = f'assertTrue({grouped_token_dp["oracleSoFar"]}'
-    grouped_token_dp["prompt"] = retrieval_info + \
-        method_javadoc + "\n" + \
-        method_signature + " {\n}\n\n" + \
-        assertion_comment + "\n" + \
-        next_possible_tokens_comment + "\n" + \
-        assertion
+    next_token = _get_next_token(grouped_token_dp["nextPossibleTokens"])
+    if next_token == ";" and grouped_token_dp["oracleSoFar"] == "":
+        assertion_so_far = ""
+        label = "// No assertion generated"
+    else:
+        assertion_so_far = f'assertTrue({grouped_token_dp["oracleSoFar"]}'
+        label = next_token if next_token != ";" else ");"
+    grouped_token_dp["prompt"] = retrieval_info + method_javadoc + "\n" + method_signature + " {\n}\n\n" + \
+        assertion_comment + "\n" + next_possible_tokens_comment + "\n" + assertion_so_far
+    grouped_token_dp["label"] = label
     return grouped_token_dp[["prompt", "label"]]
 
 
