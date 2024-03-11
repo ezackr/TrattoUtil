@@ -165,6 +165,38 @@ def _read_raw_token_dps_dir(dataset_dir: str) -> pd.DataFrame:
     return pd.concat(raw_token_dps_list).reset_index()
 
 
+def _create_starting_token_dp(token_dp: pd.Series) -> pd.Series:
+    """
+    Creates the starting token datapoint for a corresponding token datapoint.
+    This token datapoint starts with an empty string, and determines whether
+    he model generate an oracle.
+    :param token_dp: a token datapoint
+    :return: the corresponding starting token datapoint
+    """
+    lines = token_dp["prompt"].split("\n")
+    lines[-1] = ""
+    lines[-2] = "// Next possible tokens: ['assertTrue(', '// No assertion']"
+    token_dp["prompt"] = "\n".join(lines)
+    token_dp["label"] = "assertTrue("
+    return token_dp
+
+
+def _add_starting_token_dps(reformatted_token_dps: pd.DataFrame) -> pd.DataFrame:
+    """
+    Generates all starting token datapoints for all token datapoints in the
+    Tokens Dataset.
+    :param reformatted_token_dps: all reformatted token datapoints
+    :return: all reformatted token datapoints, with the added starting token
+    datapoints
+    """
+    augmented_token_dps = []
+    for _, token_dp in reformatted_token_dps.iterrows():
+        if token_dp["prompt"].endswith("assertTrue("):
+            augmented_token_dps.append(_create_starting_token_dp(token_dp.copy()))
+        augmented_token_dps.append(token_dp)
+    return pd.DataFrame(augmented_token_dps).reset_index()
+
+
 def get_tokens_dataset(use_retrieval: bool = False) -> pd.DataFrame:
     """
     Gets all non-empty token datapoints from the tokens dataset, and
@@ -179,4 +211,6 @@ def get_tokens_dataset(use_retrieval: bool = False) -> pd.DataFrame:
     all_raw_token_dps = _read_raw_token_dps_dir(dataset_dir)
     all_grouped_token_dps = _group_token_dps(raw_token_dps=all_raw_token_dps)
     all_token_dps = all_grouped_token_dps.apply(lambda x: _reformat_token_dp(x, use_retrieval), axis=1)
-    return all_token_dps.reset_index()
+    all_token_dps = _add_starting_token_dps(all_token_dps)
+    all_token_dps.drop(columns=["index"], inplace=True)
+    return all_token_dps
