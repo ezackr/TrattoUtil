@@ -1,5 +1,6 @@
 from os import walk
 from os.path import join
+import random
 import re
 from typing import Tuple
 
@@ -76,15 +77,17 @@ def _reformat_token_dp(grouped_token_dp: pd.DataFrame, use_retrieval: bool) -> p
     method_signature = grouped_token_dp["methodSourceCode"].split("{")[0]
     assertion_comment = f'// \"{grouped_token_dp["javadocTag"]}\" assertion'
     assertion_comment = re.sub(r"\n\s*", " ", assertion_comment)
-    token_values = [token_info[0] for token_info in grouped_token_dp["nextPossibleTokens"]]
-    next_possible_tokens_comment = f"// Next possible tokens: {token_values}"
     next_token = _get_next_token(grouped_token_dp["nextPossibleTokens"])
+    token_values = [");" if t_info[0] == ";" else t_info[0] for t_info in grouped_token_dp["nextPossibleTokens"]]
     if next_token == ";" and grouped_token_dp["oracleSoFar"] == "":
         assertion_so_far = ""
+        token_values = ["assertTrue", "// No assertion"]
         label = "// No assertion"
     else:
         assertion_so_far = f'assertTrue({grouped_token_dp["oracleSoFar"]}'
         label = next_token if next_token != ";" else ");"
+    random.shuffle(token_values)
+    next_possible_tokens_comment = f"// Next possible tokens: {token_values}"
     grouped_token_dp["prompt"] = retrieval_info + method_javadoc + "\n" + method_signature + " {\n}\n\n" + \
         assertion_comment + "\n" + next_possible_tokens_comment + "\n" + assertion_so_far
     grouped_token_dp["label"] = label
