@@ -178,7 +178,9 @@ def _create_starting_token_dp(token_dp: pd.Series) -> pd.Series:
     """
     lines = token_dp["prompt"].split("\n")
     lines[-1] = ""
-    lines[-2] = "// Next possible tokens: ['assertTrue(', '// No assertion']"
+    token_values = ["assertTrue", "// No assertion"]
+    random.shuffle(token_values)
+    lines[-2] = f"// Next possible tokens: {token_values}"
     token_dp["prompt"] = "\n".join(lines)
     token_dp["label"] = "assertTrue("
     return token_dp
