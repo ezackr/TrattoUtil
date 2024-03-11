@@ -73,12 +73,28 @@ Firstly, each oracle is split into multiple datapoints, corresponding to each to
 
 // "[targetTag]" assertion
 // Next possible tokens: [nextPossibleTokens]
+assertTrue([oracleSoFar][nextToken]
+```
+
+where the list `[nextPossibleTokens]` is shuffled to avoid learning incorrect behaviors, and `[nextToken]` is the next token in the oracle (and an element of the list `[nextPossibleTokens]`).
+
+At training time, the model is given the prompt:
+```
+[methodJavadoc]
+[modifiers] [methodSignature] {
+}
+
+// "[targetTag]" assertion
+// Next possible tokens: [nextPossibleTokens]
 assertTrue([oracleSoFar]
 ```
 
-where the list `[nextPossibleTokens]` is shuffled to avoid learning incorrect behaviors. 
+and attempts to decode the label (output):
+```
+[nextToken]
+```
 
-At training time, the model decodes the next token, without any hard-coded restrictions on the possible predicted tokens. This means that even if `+` is not in the list of allowed tokens, it may still be predicted. However, at inference time, the model returns the "most-likely" next token (as determined by the output probabilities) from the list of possible tokens. 
+The model decodes the token without any symbolic guidance or hard-coded restrictions on the possible predicted tokens. This means that even if `+` is not in the list of allowed tokens, it may still be predicted. However, at inference time, the model returns the "most-likely" next token (as determined by the output probabilities) from the list of possible tokens. 
 
 ### Retrieval
 
