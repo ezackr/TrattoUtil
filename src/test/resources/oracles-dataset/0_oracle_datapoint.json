@@ -6,7 +6,7 @@
   "packageName" : "",
   "className" : "",
   "javadocTag" : "@param checkpoint must not be null",
-  "methodJavadoc" : "    /**\n     *\n     * @param checkpoint must not be null\n     * @return the current count\n     */",
+  "methodJavadoc" : "    /**\n     * Returns the current count.\n     * @param checkpoint must not be null\n     * @return the current count\n     */",
   "methodSourceCode" : "public int getCount(MyObject checkpoint) {\n    SOURCE {CODE} THAT SHOULD BE REMOVED\n}",
   "classJavadoc" : "",
   "classSourceCode" : "",
