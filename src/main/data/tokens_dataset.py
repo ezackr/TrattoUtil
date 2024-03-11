@@ -81,7 +81,7 @@ def _reformat_token_dp(grouped_token_dp: pd.DataFrame, use_retrieval: bool) -> p
     next_token = _get_next_token(grouped_token_dp["nextPossibleTokens"])
     if next_token == ";" and grouped_token_dp["oracleSoFar"] == "":
         assertion_so_far = ""
-        label = "// No assertion generated"
+        label = "// No assertion"
     else:
         assertion_so_far = f'assertTrue({grouped_token_dp["oracleSoFar"]}'
         label = next_token if next_token != ";" else ");"
