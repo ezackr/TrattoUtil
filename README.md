@@ -4,20 +4,14 @@ This repository acts as a separate utilities package for the Tratto project.
 
 # Data
 
-This repository re-formats the original Oracles Dataset and Tokens Dataset from the Tratto Project into a more palatable format for the CodeLLaMa model. Each dataset is pre-processed separately into similar (but slightly different) formats.
+This repository re-formats the original Oracles Dataset and Tokens Dataset from the Tratto Project into a more palatable format for the CodeLLaMa model. Each dataset is pre-processed separately into similar (but slightly different) formats, including a "prompt" and "label" field.
 
 ## Oracles Dataset
 
 The Oracles Dataset from the Tratto project is processed into the new format:
 
-<!-- Does "methodJavadoc" refer to the entire Javadoc (i.e. including Javadoc tags) or only the description? !-->
-
 ```
-/**
- * [methodJavadoc]
- *
- * [javadocTags]
- */
+[methodJavadoc]
 [modifiers] [methodSignature] {
 }
 
@@ -41,7 +35,30 @@ public int getCount(MyObject checkpoint) {
 assertTrue(checkpoint != null);
 ```
 
-At training time, the model decodes each token in the oracle, starting after the `assertTrue(` tokens in the last line. 
+At training time, the model is given the prompt:
+
+```
+[methodJavadoc]
+[modifiers] [methodSignature] {
+}
+
+// "[targetTag]" assertion
+
+```
+
+and attempts to decode the label (output):
+
+```
+assertTrue([oracle]);
+```
+
+### Empty Oracle
+
+If an oracle is "empty" (that is, it is not possible to generate a corresponding assertion), then the corresponding label is:
+
+```
+// No assertion 
+```
 
 ## Tokens Dataset
 
