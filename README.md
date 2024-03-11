@@ -67,11 +67,7 @@ The Tokens Dataset from the Tratto Project is processed into a similar format as
 Firstly, each oracle is split into multiple datapoints, corresponding to each token. For example, in the Oracles Dataset, the oracle `checkpoint != null` corresponds to a single datapoint. However, in the Tokens Dataset, this oracle is split into 3 datapoints, corresponding to: `checkpoints`, `checkpoints !=`, and `checkpoints != null`. An additional comment is added before the assertion statement, listing all possible next tokens. Specifically, the input now has the format:
 
 ```
-/**
- * [methodJavadoc]
- *
- * [javadocTags]
- */
+[methodJavadoc]
 [modifiers] [methodSignature] {
 }
 
@@ -89,19 +85,11 @@ At training time, the model decodes the next token, without any hard-coded restr
 There are possible instances where external information may help inform the pre-trained model regarding the next possible oracle. For example, if the current `[oracleSoFar]` is `this.`, then there may be several possible methods in the list `[nextPossibleTokens]`. However, the prompt does not include any information about these methods, which makes it difficult for the model to determine their utility. To compensate, we prepend these methods and their Javadoc to the prompt, in the format,
 
 ```
-/**
- * [otherMethodJavadoc]
- *
- * [otherMethodJavadocTags]
- */
+[otherMethodJavadoc]
 [otherMethodModifiers] [otherMethodMethodSignature] {
 }
 
-/**
- * [methodJavadoc]
- *
- * [javadocTags]
- */
+[methodJavadoc]
 [modifiers] [methodSignature] {
 }
 
