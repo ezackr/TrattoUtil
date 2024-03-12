@@ -2,6 +2,30 @@
 
 This repository acts as a separate utilities package for the Tratto project. 
 
+# Setup
+
+After cloning the TrattoUtil repository, create a `path/to/TrattoUtil/dataset` directory to store the Oracles and Tokens dataset. Paste both the oracles-dataset and tokens-dataset directories into the dataset directory. The layout should resemble:
+
+```markdown
+- TrattoUtil
+    - dataset
+        - oracles-dataset
+          - train
+          - validation
+        - tokens-dataset
+          - train
+          - validation
+```
+
+Then, run the commands:
+```bash
+python reformat.py oracles train
+python reformat.py oracles validation
+python reformat.py tokens train
+python reformat.py tokens validation
+```
+to generate each re-formatted dataset JSON file.
+
 # Data
 
 This repository re-formats the original Oracles Dataset and Tokens Dataset from the Tratto Project into a more palatable format for the CodeLLaMa model. Each dataset is pre-processed separately into similar (but slightly different) formats, including a "prompt" and "label" field.
