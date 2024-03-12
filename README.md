@@ -200,15 +200,35 @@ DATASET_PREPROC = {
 }
 ```
 
-### 2.3. Set dataset field in training
+## 3. Training
 
-Add the oracles or tokens dataset arguments to the fine-tuning command. An example with the Oracles Dataset is shown below:
+Now, run the training command with the custom dataset. The command may vary depending on the number of GPUs and nodes.
+
+### 3.1. Single GPU
 
 ```bash
 python -m llama_recipes.finetuning \
-  --dataset "oracles_dataset" \
-  --custom_dataset.file "path/to/TrattoUtil/src/main/data/oracles_dataset.py" 
-  [TRAINING_PARAMETERS]
+  --use_peft \
+  --peft_method lora \
+  --quantization \
+  --model_name /path_of_model_folder/7B \
+  --output_dir path/to/save/PEFT/model \
+  --dataset "[oracles/tokens]_dataset" \
+  --custom_dataset.file "path/to/TrattoUtil/[oracles/tokens]_dataset.py"
+```
+
+### 3.2. Multiple GPUs
+
+```bash
+torchrun --nnodes 1 --nproc_per_node 4  examples/finetuning.py \
+ --enable_fsdp \
+ --use_peft \
+ --peft_method lora \
+ --model_name /path_of_model_folder/7B \
+ --fsdp_config.pure_bf16 \
+ --output_dir path/to/save/PEFT/model \
+ --dataset "[oracles/tokens]_dataset" \
+ --custom_dataset.file "path/to/TrattoUtil/[oracles/tokens]_dataset.py"
 ```
 
 
