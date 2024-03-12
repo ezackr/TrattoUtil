@@ -137,11 +137,37 @@ Follow the instructions on the [llama-recipes](https://github.com/facebookresear
 
 ### 2.1. Add a data configuration scheme
 
+Append the following data classes to the [datasets](https://github.com/facebookresearch/llama-recipes/blob/main/src/llama_recipes/configs/datasets.py) file in llama-recipes.
+
+```python
+from dataclasses import dataclass
+
+# ... other schema ... 
+
+@dataclass
+class oracles_dataset:
+    dataset: str = "oracles_dataset"
+    file: str = "path/to/TrattoUtil/src/main/data/oracles_dataset.py"
+    train_split: str = "train"
+    test_split: str = "validation"
+    
+@dataclass
+class tokens_dataset:
+    dataset: str = "tokens_dataset"
+    file: str = "path/to/TrattoUtil/src/main/data/tokens_dataset.py"
+    train_split: str = "train"
+    test_split: str = "validation"
+```
+
 ### 2.2. Copy the dataset files
 
 ### 2.3. Register the dataset
 
 ### 2.4. Set dataset field in training
+
+```bash
+python -m llama_recipes.finetuning --dataset "custom_dataset" --custom_dataset.file "examples/custom_dataset.py" [TRAINING PARAMETERS]
+```
 
 
 
