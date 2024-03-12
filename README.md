@@ -116,4 +116,11 @@ assertTrue([oracleSoFar]
 
 # Training with LLaMa-Recipes
 
+The Tratto project fine-tunes the CodeLLaMa language model using the `llama-recipes` repository. 
+
+## Data
+
+There are four steps needed to set up a custom dataset for fine-tuning.
+
+### 1. Add a data configuration schema 
 
