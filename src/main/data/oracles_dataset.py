@@ -46,14 +46,16 @@ def _read_nonempty_oracle_dps(abs_path: str) -> pd.DataFrame:
     return raw_oracle_dps[raw_oracle_dps["methodJavadoc"] != ""]
 
 
-def get_oracles_dataset(dataset_dir: str = None) -> pd.DataFrame:
+def get_oracles_dataset(dataset_dir: str = None, split: str = "train") -> pd.DataFrame:
     """
     Gets all non-empty oracles from the oracles dataset and re-formats each
     datapoint using the format specified in the top-level README.
+    :param dataset_dir: a directory containing original oracle datapoints
+    :param split: the train/test split
     :return: the re-formatted oracles
     """
     if not dataset_dir:
-        dataset_dir = join(root_dir, "dataset", "oracles-dataset")
+        dataset_dir = join(root_dir, "dataset", "oracles-dataset", split)
     oracle_dps_list = []
     for root, _, files in walk(dataset_dir):
         for file in tqdm(files):
