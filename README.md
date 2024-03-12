@@ -140,7 +140,7 @@ assertTrue([oracleSoFar]
 
 # Training with LLaMa-Recipes
 
-The Tratto project fine-tunes the CodeLLaMa language model using the `llama-recipes` repository. 
+The Tratto project fine-tunes the CodeLLaMa language model using the `llama-recipes` repository. All [setup](#setup) instructions should be completed before performing the following steps.
 
 ## 1. CodeLLaMa
 
@@ -171,14 +171,14 @@ from dataclasses import dataclass
 @dataclass
 class oracles_dataset:
     dataset: str = "oracles_dataset"
-    file: str = "path/to/TrattoUtil/src/main/data/oracles_dataset.py"
+    file: str = "path/to/TrattoUtil/get_oracles_dataset.py"
     train_split: str = "train"
     test_split: str = "validation"
     
 @dataclass
 class tokens_dataset:
     dataset: str = "tokens_dataset"
-    file: str = "path/to/TrattoUtil/src/main/data/tokens_dataset.py"
+    file: str = "path/to/TrattoUtil/get_tokens_dataset.py"
     train_split: str = "train"
     test_split: str = "validation"
 ```
