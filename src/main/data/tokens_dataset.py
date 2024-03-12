@@ -202,16 +202,18 @@ def _add_starting_token_dps(reformatted_token_dps: pd.DataFrame) -> pd.DataFrame
     return pd.DataFrame(augmented_token_dps).reset_index()
 
 
-def get_tokens_dataset(dataset_dir: str = None, use_retrieval: bool = False) -> pd.DataFrame:
+def get_tokens_dataset(dataset_dir: str = None, split: str = "train", use_retrieval: bool = False) -> pd.DataFrame:
     """
-    Gets all non-empty token datapoints from the tokens dataset, and
-    re-formats each datapoint using the format specified in the top-level
-    README.
+    Gets all non-empty tokens from the tokens dataset and re-formats each
+    datapoint using the format specified in the top-level README.
+    :param dataset_dir: a directory containing original token datapoints
+    :param split: the data split (i.e. "train" or "validation")
+    :param use_retrieval: whether to prepend retrieval information
     :return: the re-formatted token datapoints
     """
     if not dataset_dir:
         dataset_dir_name = "tokens-retrieval-dataset" if use_retrieval else "tokens-dataset"
-        dataset_dir = join(root_dir, "dataset", dataset_dir_name)
+        dataset_dir = join(root_dir, "dataset", dataset_dir_name, split)
     all_raw_token_dps = _read_raw_token_dps_dir(dataset_dir)
     all_grouped_token_dps = _group_token_dps(raw_token_dps=all_raw_token_dps)
     all_token_dps = all_grouped_token_dps.apply(lambda x: _reformat_token_dp(x, use_retrieval), axis=1)
