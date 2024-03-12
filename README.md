@@ -161,10 +161,30 @@ class tokens_dataset:
 
 ### 2.2. Register the dataset
 
+Add keys for the new datasets to the [dataset utils](https://github.com/facebookresearch/llama-recipes/blob/main/src/llama_recipes/utils/dataset_utils.py) script.
+
+```python
+def get_custom_dataset(dataset_config, tokenizer, split: str):
+    # ... implementation ...
+    pass
+
+
+DATASET_PREPROC = {
+    # ... other dataset keys ...
+    "oracles_dataset": get_custom_dataset,
+    "tokens_dataset": get_custom_dataset
+}
+```
+
 ### 2.3. Set dataset field in training
 
+Add the oracles or tokens dataset arguments to the fine-tuning command. An example with the Oracles Dataset is shown below:
+
 ```bash
-python -m llama_recipes.finetuning --dataset "custom_dataset" --custom_dataset.file "examples/custom_dataset.py" [TRAINING PARAMETERS]
+python -m llama_recipes.finetuning \
+  --dataset "oracles_dataset" \
+  --custom_dataset.file "path/to/TrattoUtil/src/main/data/oracles_dataset.py" 
+  [TRAINING_PARAMETERS]
 ```
 
 
