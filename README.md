@@ -159,11 +159,9 @@ class tokens_dataset:
     test_split: str = "validation"
 ```
 
-### 2.2. Copy the dataset files
+### 2.2. Register the dataset
 
-### 2.3. Register the dataset
-
-### 2.4. Set dataset field in training
+### 2.3. Set dataset field in training
 
 ```bash
 python -m llama_recipes.finetuning --dataset "custom_dataset" --custom_dataset.file "examples/custom_dataset.py" [TRAINING PARAMETERS]
