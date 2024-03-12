@@ -36,7 +36,7 @@ def get_custom_dataset(dataset_config, tokenizer, split: str):
     :param split: the train or test data split
     :return: a HuggingFace dataset
     """
-    artifact_path = join(root_dir, "dataset", "oracles_dataset.json")
+    artifact_path = join(root_dir, "dataset", f"oracles_{split}_dataset.json")
     if not exists(artifact_path):
         raise ValueError("Unable to locate dataset file:", artifact_path)
     dataset = pd.read_json(artifact_path)
