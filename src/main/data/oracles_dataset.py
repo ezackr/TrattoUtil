@@ -2,6 +2,7 @@ from os import walk
 from os.path import join
 import re
 
+from datasets import Dataset
 import pandas as pd
 from tqdm import tqdm
 
@@ -62,3 +63,17 @@ def get_oracles_dataset(dataset_dir: str = None) -> pd.DataFrame:
     all_oracle_dps = pd.concat(oracle_dps_list).reset_index()
     all_oracle_dps.drop(columns=["index"], inplace=True)
     return all_oracle_dps
+
+
+def get_custom_dataset(dataset_config, tokenizer, split):
+    """
+    The method used by the llama-recipes repository for loading the oracles
+    dataset for CodeLLaMa fine-tuning. The parameters of this method are
+    hard-coded for compatibility with the llama-recipes framework, such that
+    some parameters may be unused.
+    :param dataset_config: dataset configuration
+    :param tokenizer: input tokenizer
+    :param split: the train or test data split
+    :return: a HuggingFace dataset
+    """
+    pass
