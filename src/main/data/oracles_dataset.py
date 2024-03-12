@@ -15,20 +15,19 @@ def _reformat_oracle_dp(raw_oracle_dp: pd.DataFrame) -> pd.DataFrame:
     :param raw_oracle_dp: the original oracle datapoint
     :return: the re-formatted oracle datapoint
     """
+    # get prompt
     method_javadoc = raw_oracle_dp["methodJavadoc"].replace("    /**", "/**")
     method_javadoc = re.sub(r"\n[ \t]*\*", "\n *", method_javadoc, flags=re.MULTILINE)
     method_signature = raw_oracle_dp["methodSourceCode"].split("{")[0]
     assertion_comment = f'// \"{raw_oracle_dp["javadocTag"]}\" assertion'
     assertion_comment = re.sub(r"\n\s*", " ", assertion_comment)
+    raw_oracle_dp["prompt"] = method_javadoc + "\n" + method_signature + " {\n}\n\n" + assertion_comment + "\n"
+    # get label
     if raw_oracle_dp["oracle"] == ";":
-        assertion = "// No assertion"
+        raw_oracle_dp["label"] = "// No assertion"
     else:
-        assertion = f'assertTrue({raw_oracle_dp["oracle"].split(";")[0]});'
-    raw_oracle_dp["prompt"] = method_javadoc + "\n" + \
-        method_signature + " {\n}\n\n" + \
-        assertion_comment + "\n" + \
-        assertion
-    return raw_oracle_dp["prompt"]
+        raw_oracle_dp["label"] = f'assertTrue({raw_oracle_dp["oracle"].split(";")[0]});'
+    return raw_oracle_dp[["prompt", "label"]]
 
 
 def _read_nonempty_oracle_dps(abs_path: str) -> pd.DataFrame:
