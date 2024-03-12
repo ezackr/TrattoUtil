@@ -8,8 +8,9 @@ example_oracles_dataset_path: str = os.path.join(root_dir, "src", "test", "resou
 
 def test_get_oracles_dataset():
     dataset = get_oracles_dataset(example_oracles_dataset_path)
-    prompts = dataset.values
-    assert prompts[0][0] == """/**
+    prompt = dataset["prompt"][0]
+    label = dataset["label"][0]
+    assert prompt == """/**
  * Returns the current count.
  * @param checkpoint must not be null
  * @return the current count
@@ -18,4 +19,5 @@ public int getCount(MyObject checkpoint)  {
 }
 
 // "@param checkpoint must not be null" assertion
-assertTrue(checkpoint != null);"""
+"""
+    assert label == "assertTrue(checkpoint != null);"
