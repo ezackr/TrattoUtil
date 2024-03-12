@@ -159,6 +159,8 @@ Follow the instructions on the [llama-recipes](https://github.com/facebookresear
 
 ## 2. Data
 
+All fine-tuning occurs in the llama-recipes repository. To fine-tune on the oracles or tokens dataset, there must be a few adjustments to various data management files. 
+
 ### 2.1. Add a data configuration scheme
 
 Append the following data classes to the [datasets](https://github.com/facebookresearch/llama-recipes/blob/main/src/llama_recipes/configs/datasets.py) file in llama-recipes.
