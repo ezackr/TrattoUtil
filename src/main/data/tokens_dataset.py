@@ -71,7 +71,6 @@ def _reformat_token_dp(grouped_token_dp: pd.DataFrame, use_retrieval: bool) -> p
         retrieval_info = _get_retrieval_information(grouped_token_dp["nextPossibleTokens"])
     else:
         retrieval_info = ""
-    # get prompt and label
     method_javadoc = grouped_token_dp["methodJavadoc"].replace("    /**", "/**")
     method_javadoc = re.sub(r"\n[ \t]*\*", "\n *", method_javadoc, flags=re.MULTILINE)
     method_signature = grouped_token_dp["methodSourceCode"].split("{")[0]
@@ -82,16 +81,15 @@ def _reformat_token_dp(grouped_token_dp: pd.DataFrame, use_retrieval: bool) -> p
     if next_token == ";" and grouped_token_dp["oracleSoFar"] == "":
         assertion_so_far = ""
         token_values = ["assertTrue", "// No assertion"]
-        label = "// No assertion"
+        next_assertion_token = "// No assertion"
     else:
         assertion_so_far = f'assertTrue({grouped_token_dp["oracleSoFar"]}'
-        label = next_token if next_token != ";" else ");"
+        next_assertion_token = next_token if next_token != ";" else ");"
     random.shuffle(token_values)
     next_possible_tokens_comment = f"// Next possible tokens: {token_values}"
     grouped_token_dp["prompt"] = retrieval_info + method_javadoc + "\n" + method_signature + " {\n}\n\n" + \
-        assertion_comment + "\n" + next_possible_tokens_comment + "\n" + assertion_so_far
-    grouped_token_dp["label"] = label
-    return grouped_token_dp[["prompt", "label"]]
+        assertion_comment + "\n" + next_possible_tokens_comment + "\n" + assertion_so_far + next_assertion_token
+    return grouped_token_dp["prompt"]
 
 
 def _aggregate_grouped_token_dps(grouped_token_dps: pd.DataFrame, oracle_so_far: str) -> pd.DataFrame:
@@ -181,8 +179,7 @@ def _create_starting_token_dp(token_dp: pd.Series) -> pd.Series:
     token_values = ["assertTrue", "// No assertion"]
     random.shuffle(token_values)
     lines[-2] = f"// Next possible tokens: {token_values}"
-    token_dp["prompt"] = "\n".join(lines)
-    token_dp["label"] = "assertTrue("
+    token_dp["prompt"] = "\n".join(lines) + "assertTrue("
     return token_dp
 
 
