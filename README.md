@@ -118,9 +118,30 @@ assertTrue([oracleSoFar]
 
 The Tratto project fine-tunes the CodeLLaMa language model using the `llama-recipes` repository. 
 
-## Data
+## 1. CodeLLaMa
 
-There are four steps needed to set up a custom dataset for fine-tuning.
+### 1.1. Download CodeLLaMa
 
-### 1. Add a data configuration schema 
+Follow the instructions on the [CodeLLaMa](https://github.com/facebookresearch/codellama) GitHub page to download the model weights for CodeLLaMa.
+
+### 1.2. Convert to HuggingFace
+
+Follow the instructions on the [llama-recipes](https://github.com/facebookresearch/llama-recipes/tree/main?tab=readme-ov-file#model-conversion-to-hugging-face) GItHub page to convert the downloaded CodeLLaMa model into their HuggingFace format.
+
+[//]: # (### 1.3. &#40;Optional&#41; Fine-tune with example dataset)
+
+[//]: # ()
+[//]: # (As a sanity check, run the command )
+
+## 2. Data
+
+### 2.1. Add a data configuration scheme
+
+### 2.2. Copy the dataset files
+
+### 2.3. Register the dataset
+
+### 2.4. Set dataset field in training
+
+
 
