@@ -26,7 +26,7 @@ def generate_dataset(dataset_name: str, split: str, remove_empty_oracles: bool =
     if remove_empty_oracles:
         print("Removing empty oracles.")
         dataset = dataset[dataset["label"] != "// No assertion"]
-    print(f"Generated {len(dataset)} datapoints from the {dataset_name} dataset.")
+    print(f"Generated {len(dataset)} datapoints from the {dataset_name} {split} dataset.")
     # save final dataset
-    artifact_name = join(root_dir, "dataset", f"{dataset_name}_dataset.json")
+    artifact_name = join(root_dir, "dataset", f"{dataset_name}_{split}_dataset.json")
     dataset.to_json(artifact_name, orient='records')
