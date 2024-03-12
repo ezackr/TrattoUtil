@@ -4,9 +4,6 @@ from src.main.data.oracles_dataset import get_oracles_dataset
 from src.main.data.tokens_dataset import get_tokens_dataset
 from src.main.util import root_dir
 
-# all supported dataset names
-dataset_names = ["oracles", "tokens", "tokens_retrieval"]
-
 
 def generate_dataset(dataset_name: str, split: str, remove_empty_oracles: bool = False):
     """
