@@ -59,7 +59,7 @@ public int getCount(MyObject checkpoint) {
 assertTrue(checkpoint != null);
 ```
 
-At training time, the model is given the prompt:
+At inference time, the model is given the prompt:
 
 ```
 [methodJavadoc]
@@ -102,7 +102,7 @@ assertTrue([oracleSoFar][nextToken]
 
 where the list `[nextPossibleTokens]` is shuffled to avoid learning incorrect behaviors, and `[nextToken]` is the next token in the oracle (and an element of the list `[nextPossibleTokens]`).
 
-At training time, the model is given the prompt:
+At inference time, the model is given the prompt:
 ```
 [methodJavadoc]
 [modifiers] [methodSignature] {
