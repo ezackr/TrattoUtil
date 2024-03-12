@@ -4,6 +4,7 @@ from os.path import exists
 from os.path import join
 import re
 
+from datasets import Dataset
 import pandas as pd
 from tqdm import tqdm
 
@@ -100,3 +101,4 @@ def get_custom_dataset(dataset_config, tokenizer, split: str):
         raise ValueError("Unable to locate dataset file:", artifact_path)
     dataset = pd.read_json(artifact_path)
     dataset = dataset.apply(lambda x: tokenize_prompt(tokenizer, x), axis=1)
+    return Dataset.from_pandas(dataset)
