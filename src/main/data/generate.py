@@ -8,20 +8,21 @@ from src.main.util import root_dir
 dataset_names = ["oracles", "tokens", "tokens_retrieval"]
 
 
-def generate_dataset(dataset_name: str, remove_empty_oracles: bool = False):
+def generate_dataset(dataset_name: str, split: str, remove_empty_oracles: bool = False):
     """
     Generates the given dataset and saves the output as a ".pt" file.
     :param dataset_name: the dataset type
+    :param split: the data split (i.e. "train" or "validation")
     :param remove_empty_oracles: whether to remove empty oracles from the data
     """
     # get all oracles
     print("Retrieving all oracles.")
     if dataset_name == "oracles":
-        dataset = get_oracles_dataset()
+        dataset = get_oracles_dataset(split=split)
     elif dataset_name == "tokens":
-        dataset = get_tokens_dataset(use_retrieval=False)
+        dataset = get_tokens_dataset(split=split, use_retrieval=False)
     elif dataset_name == "tokens_retrieval":
-        dataset = get_tokens_dataset(use_retrieval=True)
+        dataset = get_tokens_dataset(split=split, use_retrieval=True)
     else:
         raise ValueError(f"Unrecognized dataset name: {dataset_name}")
     # remove empty oracles if necessary
