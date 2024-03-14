@@ -1,4 +1,6 @@
-from os.path import join
+from os.path import exists, join
+
+import pandas as pd
 
 from src.main.data.oracles_dataset import get_oracles_dataset
 from src.main.data.tokens_dataset import get_tokens_dataset
@@ -30,3 +32,17 @@ def generate_dataset(dataset_name: str, split: str, remove_empty_oracles: bool =
     # save final dataset
     artifact_name = join(root_dir, "dataset", f"{dataset_name}_{split}_dataset.json")
     dataset.to_json(artifact_name, orient='records')
+
+
+def load_dataset(dataset_name: str, split: str) -> pd.DataFrame:
+    """
+    Loads the given dataset saved as a file on disk. Expects that the
+    generate_dataset method has been run before.
+    :param dataset_name: the dataset type
+    :param split: the data split (i.e. "train" or "validation")
+    :return: the dataset as a pandas dataframe
+    """
+    artifact_name = join(root_dir, "dataset", f"{dataset_name}_{split}_dataset.json")
+    if not exists(artifact_name):
+        raise ValueError("Unable to find dataset", artifact_name)
+    return pd.read_json(artifact_name)
