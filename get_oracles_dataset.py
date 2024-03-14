@@ -1,10 +1,9 @@
 import itertools
-from os.path import exists, join
 
 from datasets import Dataset
 import pandas as pd
 
-from src.main.util.io import root_dir
+from src.main.data import load_dataset
 
 
 def tokenize_prompt(tokenizer, oracle_dp: pd.DataFrame) -> pd.DataFrame:
@@ -36,9 +35,6 @@ def get_custom_dataset(dataset_config, tokenizer, split: str):
     :param split: the train or test data split
     :return: a HuggingFace dataset
     """
-    artifact_path = join(root_dir, "dataset", f"oracles_{split}_dataset.json")
-    if not exists(artifact_path):
-        raise ValueError("Unable to locate dataset file:", artifact_path)
-    dataset = pd.read_json(artifact_path)
+    dataset = load_dataset("oracles", split)
     dataset = dataset.apply(lambda x: tokenize_prompt(tokenizer, x), axis=1)
     return Dataset.from_pandas(dataset)
