@@ -81,7 +81,7 @@ def _reformat_token_dp(grouped_token_dp: pd.DataFrame, use_retrieval: bool) -> p
     token_values = [");" if t_info[0] == ";" else t_info[0] for t_info in grouped_token_dp["nextPossibleTokens"]]
     if next_token == ";" and grouped_token_dp["oracleSoFar"] == "":
         assertion_so_far = ""
-        token_values = ["assertTrue", "// No assertion"]
+        token_values = ["assertTrue(", "// No assertion"]
         label = "// No assertion"
     else:
         assertion_so_far = f'assertTrue({grouped_token_dp["oracleSoFar"]}'
@@ -178,7 +178,7 @@ def _create_starting_token_dp(token_dp: pd.Series) -> pd.Series:
     """
     lines = token_dp["prompt"].split("\n")
     lines[-1] = ""
-    token_values = ["assertTrue", "// No assertion"]
+    token_values = ["assertTrue(", "// No assertion"]
     random.shuffle(token_values)
     lines[-2] = f"// Next possible tokens: {token_values}"
     token_dp["prompt"] = "\n".join(lines)
