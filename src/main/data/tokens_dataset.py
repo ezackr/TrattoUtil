@@ -9,6 +9,8 @@ from tqdm import tqdm
 
 from src.main.util import root_dir
 
+unused_features = ["classJavadoc", "classSourceCode"]
+
 
 def _get_method_retrieval_information(method_source_code: str) -> str:
     """
@@ -164,6 +166,7 @@ def _read_raw_token_dps_dir(dataset_dir: str) -> pd.DataFrame:
             abs_path = join(root, file)
             raw_token_dps = _read_raw_token_dps(abs_path)
             if len(raw_token_dps) > 0:
+                raw_token_dps = raw_token_dps.drop(columns=unused_features)
                 raw_token_dps_list.append(raw_token_dps)
     return pd.concat(raw_token_dps_list).reset_index()
 
