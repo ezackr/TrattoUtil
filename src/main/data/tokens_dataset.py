@@ -78,7 +78,7 @@ def _reformat_token_dp(grouped_token_dp: pd.DataFrame, use_retrieval: bool) -> p
     assertion_comment = f'// \"{grouped_token_dp["javadocTag"]}\" assertion'
     assertion_comment = re.sub(r"\n\s*", " ", assertion_comment)
     next_token = _get_next_token(grouped_token_dp["nextPossibleTokens"])
-    token_values = [");" if t_info[0] == ";" else t_info[0] for t_info in grouped_token_dp["nextPossibleTokens"]]
+    token_values = list({");" if t_info[0] == ";" else t_info[0] for t_info in grouped_token_dp["nextPossibleTokens"]})
     if next_token == ";" and grouped_token_dp["oracleSoFar"] == "":
         assertion_so_far = ""
         token_values = ["assertTrue(", "// No assertion"]
