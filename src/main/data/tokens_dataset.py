@@ -139,38 +139,6 @@ def _group_token_dps(raw_token_dps: pd.DataFrame) -> pd.DataFrame:
     return pd.concat(grouped_token_dps)
 
 
-def _read_raw_token_dps(abs_path: str) -> pd.DataFrame:
-    """
-    Reads all token datapoints from a JSON file as a pandas dataframe. This
-    method filters datapoints if their "methodJavadoc" is empty.
-    :param abs_path: the path to the JSON file of token datapoints
-    :return: the corresponding pandas dataframe
-    """
-    raw_token_dps = pd.read_json(abs_path)
-    if len(raw_token_dps) == 0:
-        return raw_token_dps
-    return raw_token_dps[raw_token_dps["methodJavadoc"] != ""]
-
-
-def _read_raw_token_dps_dir(dataset_dir: str) -> pd.DataFrame:
-    """
-    Reads all token datapoints from a directory of JSON files as a pandas
-    dataframe. This method filters datapoints if their "methodJavadoc" is
-    empty.
-    :param dataset_dir: a directory of JSON files of token datapoints
-    :return: the corresponding pandas dataframe
-    """
-    raw_token_dps_list = []
-    for root, _, files in walk(dataset_dir):
-        for file in tqdm(files):
-            abs_path = join(root, file)
-            raw_token_dps = _read_raw_token_dps(abs_path)
-            if len(raw_token_dps) > 0:
-                raw_token_dps = raw_token_dps.drop(columns=unused_features)
-                raw_token_dps_list.append(raw_token_dps)
-    return pd.concat(raw_token_dps_list).reset_index()
-
-
 def _create_starting_token_dp(token_dp: pd.Series) -> pd.Series:
     """
     Creates the starting token datapoint for a corresponding token datapoint.
@@ -205,6 +173,19 @@ def _add_starting_token_dps(reformatted_token_dps: pd.DataFrame) -> pd.DataFrame
     return pd.DataFrame(augmented_token_dps).reset_index()
 
 
+def _read_raw_token_dps(abs_path: str) -> pd.DataFrame:
+    """
+    Reads all token datapoints from a JSON file as a pandas dataframe. This
+    method filters datapoints if their "methodJavadoc" is empty.
+    :param abs_path: the path to the JSON file of token datapoints
+    :return: the corresponding pandas dataframe
+    """
+    raw_token_dps = pd.read_json(abs_path)
+    if len(raw_token_dps) == 0:
+        return raw_token_dps
+    return raw_token_dps[raw_token_dps["methodJavadoc"] != ""]
+
+
 def get_tokens_dataset(dataset_dir: str = None, split: str = "train", use_retrieval: bool = False) -> pd.DataFrame:
     """
     Gets all non-empty tokens from the tokens dataset and re-formats each
@@ -217,9 +198,15 @@ def get_tokens_dataset(dataset_dir: str = None, split: str = "train", use_retrie
     if not dataset_dir:
         dataset_dir_name = "tokens-retrieval-dataset" if use_retrieval else "tokens-dataset"
         dataset_dir = join(root_dir, "dataset", dataset_dir_name, split)
-    all_raw_token_dps = _read_raw_token_dps_dir(dataset_dir)
-    all_grouped_token_dps = _group_token_dps(raw_token_dps=all_raw_token_dps)
-    all_token_dps = all_grouped_token_dps.apply(lambda x: _reformat_token_dp(x, use_retrieval), axis=1)
+    token_dps_list = []
+    for root, _, files in walk(dataset_dir):
+        for file in tqdm(files):
+            abs_path = join(root, file)
+            raw_token_dps = _read_raw_token_dps(abs_path)
+            if len(raw_token_dps) > 0:
+                token_dps = raw_token_dps.apply(lambda x: _reformat_token_dp(x, use_retrieval), axis=1)
+                token_dps_list.append(token_dps)
+    all_token_dps = pd.concat(token_dps_list).reset_index()
     all_token_dps = _add_starting_token_dps(all_token_dps)
     all_token_dps.drop(columns=["index"], inplace=True)
     return all_token_dps
