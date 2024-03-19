@@ -2,7 +2,6 @@ from os import walk
 from os.path import join
 import random
 import re
-from typing import Tuple
 
 import pandas as pd
 from tqdm import tqdm
@@ -42,9 +41,13 @@ def _get_retrieval_information(next_possible_tokens: pd.DataFrame) -> str:
     retrieval_info = ""
     for token_info in next_possible_tokens:
         if token_info[1] == "MethodName":
+            # add method javadoc and signature
             method_source_code = token_info[2][2]
             if method_source_code:
                 retrieval_info += _get_method_retrieval_information(method_source_code)
+        elif token_info[1] == "ClassField":
+            # add field javadoc and declaration
+            retrieval_info += token_info[2][2] + "\n"
     return retrieval_info
 
 
