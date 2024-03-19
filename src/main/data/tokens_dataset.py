@@ -150,7 +150,6 @@ def get_tokens_dataset(dataset_dir: str = None, split: str = "train", use_retrie
         for file in tqdm(files):
             abs_path = join(root, file)
             raw_token_dps = _read_raw_token_dps(abs_path)
-            print(raw_token_dps)
             if len(raw_token_dps) > 0:
                 token_dps = raw_token_dps.apply(lambda x: _reformat_token_dp(x, use_retrieval), axis=1)
                 token_dps_list.append(token_dps)
@@ -158,7 +157,3 @@ def get_tokens_dataset(dataset_dir: str = None, split: str = "train", use_retrie
     all_token_dps = _add_starting_token_dps(all_token_dps)
     all_token_dps.drop(columns=["index"], inplace=True)
     return all_token_dps
-
-
-if __name__ == "__main__":
-    get_tokens_dataset(split="validation", use_retrieval=False)
