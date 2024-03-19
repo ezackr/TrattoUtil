@@ -48,18 +48,6 @@ def _get_retrieval_information(next_possible_tokens: pd.DataFrame) -> str:
     return retrieval_info
 
 
-def _get_next_token(next_possible_tokens: Tuple[str, str, str, str]) -> str:
-    """
-    Gets the next token in an oracle from a list of possible tokens
-    :param next_possible_tokens: all next possible tokens
-    :return: the next token in the oracleSoFar
-    """
-    for token_info in next_possible_tokens:
-        if token_info[-1]:
-            return token_info[0]
-    raise ValueError("Unable to identify next possible token from list:", next_possible_tokens)
-
-
 def _reformat_token_dp(raw_token_dp: pd.DataFrame, use_retrieval: bool) -> pd.DataFrame:
     """
     Re-formats a token datapoint into the new format, as described in the
