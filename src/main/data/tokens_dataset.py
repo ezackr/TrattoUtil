@@ -125,20 +125,6 @@ def _aggregate_grouped_token_dps(grouped_token_dps: pd.DataFrame, oracle_so_far:
     return pd.DataFrame(agg_data)
 
 
-def _group_token_dps(raw_token_dps: pd.DataFrame) -> pd.DataFrame:
-    """
-    Aggregates the original token datapoints into groups based on their
-    corresponding oracleId and oracleSoFar features.
-    :param raw_token_dps: the original token datapoints
-    :return: the aggregated token datapoints
-    """
-    grouped_token_dps = []
-    for _, oracle_id_grouped_token_dps in raw_token_dps.groupby("oracleId"):
-        for oracle_so_far,  oracle_so_far_grouped_token_dps in oracle_id_grouped_token_dps.groupby("oracleSoFar"):
-            grouped_token_dps.append(_aggregate_grouped_token_dps(oracle_so_far_grouped_token_dps, str(oracle_so_far)))
-    return pd.concat(grouped_token_dps)
-
-
 def _create_starting_token_dp(token_dp: pd.Series) -> pd.Series:
     """
     Creates the starting token datapoint for a corresponding token datapoint.
