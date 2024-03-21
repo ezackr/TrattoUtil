@@ -67,6 +67,9 @@ def _reformat_token_dp(raw_token_dp: pd.DataFrame, use_retrieval: bool) -> pd.Da
     method_javadoc = raw_token_dp["methodJavadoc"].replace("    /**", "/**")
     method_javadoc = re.sub(r"\n[ \t]*\*", "\n *", method_javadoc, flags=re.MULTILINE)
     method_signature = raw_token_dp["methodSourceCode"].split("{")[0]
+    if method_signature.endswith(";"):
+        # remove trailing semicolon for some methods
+        method_signature = method_signature[:-1]
     assertion_comment = f'// \"{raw_token_dp["javadocTag"]}\" assertion'
     assertion_comment = re.sub(r"\n\s*", " ", assertion_comment)
     next_token = raw_token_dp["token"]
