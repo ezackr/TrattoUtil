@@ -40,14 +40,14 @@ def _get_retrieval_information(next_possible_tokens: pd.DataFrame) -> str:
     """
     retrieval_info = ""
     for token_info in next_possible_tokens:
-        if token_info[1] == "MethodName":
+        if token_info["tokenClass"] == "MethodName":
             # add method javadoc and signature
-            method_source_code = token_info[2][2]
+            method_source_code = token_info["tokenInfo"][2]
             if method_source_code:
                 retrieval_info += _get_method_retrieval_information(method_source_code)
-        elif token_info[1] == "ClassField":
+        elif token_info["tokenClass"] == "ClassField":
             # add field javadoc and declaration
-            retrieval_info += token_info[2][2] + "\n"
+            retrieval_info += token_info["tokenInfo"][2] + "\n"
     return retrieval_info
 
 
@@ -73,7 +73,9 @@ def _reformat_token_dp(raw_token_dp: pd.DataFrame, use_retrieval: bool) -> pd.Da
     assertion_comment = f'// \"{raw_token_dp["javadocTag"]}\" assertion'
     assertion_comment = re.sub(r"\n\s*", " ", assertion_comment)
     next_token = raw_token_dp["token"]
-    token_values = list({");" if t_info[0] == ";" else t_info[0] for t_info in raw_token_dp["eligibleTokens"]})
+    token_values = list({
+        ");" if t_info["token"] == ";" else t_info["token"] for t_info in raw_token_dp["eligibleTokens"]
+    })
     if next_token == ";" and raw_token_dp["oracleSoFar"] == "":
         assertion_so_far = ""
         token_values = ["assertTrue(", "// No assertion"]
